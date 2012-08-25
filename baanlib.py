@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+__all__ = ['Baan']
+__version__ = '0.1.0'
+
 import sys
 import logging
 
@@ -16,8 +19,33 @@ else:
     from win32com.client.dynamic import Dispatch
 
 
+# Please note:
+# To avoid collision with baan dll function names, inside the classes even
+# "public" properties like dll_name are prefixed with '_'
+
+
 class Baan(object):
+    """Wrapper class for win32com Dispatch
+
+    It chains each attribute access until it is finally called.
+    The first attribute name will be taken as the dll name,
+    everything afterwards will be interpreted as part of the function name.
+
+    >>> from baanlib import Baan
+    >>> b = Baan('Baan.Application.erpln')
+    >>> retval = b.dll_name.some.method.name()
+
+    Calling the "chained attribute names" will invoke
+    ParseExecFunction and return the ReturnValue of the baan object created from
+    the dispatcher
+    """
+
     def __init__(self, name, dispatcher=Dispatch):
+        """Instantiate a baan object
+
+        :param name: ole automation class name taken from the bw configuration
+        :param dispatcher: Shouldn't be specified, only to be used for testing.
+        """
         self._baan = dispatcher(name)
         self._baan.Timeout = 3600
 
@@ -67,15 +95,15 @@ class Baan(object):
 class BaanWrapper(object):
     def __init__(self, baanobj, name):
         self._baanobj = baanobj
-        self.name = name
+        self._name = name
 
     @property
     def _dll_name(self):
-        return self.name.split('.')[0]
+        return self._name.split('.')[0]
 
     @property
     def _method_name(self):
-        return '.'.join(self.name.split('.')[1:])
+        return '.'.join(self._name.split('.')[1:])
 
     def _get_calling_method(self, *args):
         method = self._method_name + '('
@@ -92,7 +120,7 @@ class BaanWrapper(object):
         return method
 
     def __getattr__(self, name):
-        return BaanWrapper(self._baanobj, self.name + "." + name)
+        return BaanWrapper(self._baanobj, self._name + "." + name)
 
     def __call__(self, *args):
         method = self._get_calling_method(*args)

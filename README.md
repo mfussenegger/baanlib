@@ -9,11 +9,14 @@ Instead of having to write
 
     # Modify 'Baan.Application.erpln' to the Class Name in the BW configuration if necessary
     baan = Dispatch('Baan.Application.erpln')
+    baan.Timeout = 3600
 
     baan.ParseExecFunction(
         "odll_name",
         'some.function.name("with", "a", "few", "arguments")'
     )
+
+    baan.Quit()
 
 It gets especially annoying if you want to use variables from your python scripts, as you'll always have to construct the string:
 
@@ -23,9 +26,9 @@ baanlib makes all that a little bit easier:
 
     from baanlib import Baan
 
-    b = Baan('Baan.Application.erpln')
-    b.odll_name.some.function.name("with", "a", "few", "arguments")
+    with Baan('Baan.Application.erpln') as b:
+        b.odll_name.some.function.name("with", "a", "few", "arguments")
 
-    var = 1
-    foo = 'test'
-    b.odll_name.some.function.name(var, foo)
+        var = 1
+        foo = 'test'
+        b.odll_name.some.function.name(var, foo)

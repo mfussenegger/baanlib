@@ -97,4 +97,4 @@ class BaanWrapper(object):
     def __call__(self, *args):
         method = self._get_calling_method(*args)
         self._baanobj.ParseExecFunction(self._dll_name, method)
-        return self.baanobj.ReturnValue
+        return self._baanobj.ReturnValue

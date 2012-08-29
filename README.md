@@ -38,3 +38,23 @@ with Baan('Baan.Application.erpln') as b:
     foo = 'test'
     b.odll_name.some.function.name(var, foo)
 ```
+To further reduce the amount of typing required, the api can also be used like this:
+
+```python
+with Baan('Baan.Application.erpln') as b:
+    f = b.ottstpapihand
+    put = f.stpapi.put.field
+
+    put("sessioncode", "fieldname1", "value1")
+    put("sessioncode", "fieldname2", "value2")
+
+    f.end.session("sessioncode")
+```
+
+## Installation
+
+Baanlib requires the pywin32 extensions which are available on [sourceforge](http://sourceforge.net/projects/pywin32/files/pywin32/Build%20217/).
+
+Once the pywin32 requirement is met, baanlib can be installed using pip.
+
+    pip install --upgrade baanlib

@@ -2,10 +2,11 @@
 # -*- coding: utf-8 -*-
 
 __all__ = ['Baan']
-__version__ = '0.1.2'
+__version__ = '0.1.3'
 
 import sys
 import logging
+from numbers import Number
 
 logger = logging.getLogger('baanlib')
 
@@ -111,7 +112,7 @@ class BaanWrapper(object):
     def _get_calling_method(self, *args):
         method = self._method_name + '('
         for i, arg in enumerate(args):
-            if isinstance(arg, int):
+            if isinstance(arg, Number):
                 method += str(arg)
             else:
                 method += '"{0}"'.format(arg)

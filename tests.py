@@ -54,16 +54,22 @@ class TestBaanWrapper(TestCase):
             'some.foo("test", 10)',
         )
 
+        b.test.some.foo("test", 10.0)
+        baanmock.ParseExecFunction.assert_called_with(
+            'test',
+            'some.foo("test", 10.0)',
+        )
+
         b.close()
 
     def test_with_statement(self):
-        with Baan('Baan.Application.erpln') as b:
+        with Baan('Baan.Application.erpln', dispatcher=Mock()) as b:
             b.test.foo(1)
 
         self.assertIsNone(b._baan)
 
     def test_has_properties(self):
-        with Baan('Baan.Application.erpln') as b:
+        with Baan('Baan.Application.erpln', dispatcher=Mock()) as b:
             self.assertNotIsInstance(b.Timeout, BaanWrapper)
             self.assertEqual(b.Timeout, 3600)
             self.assertNotIsInstance(b.ReturnValue, BaanWrapper)
@@ -72,7 +78,7 @@ class TestBaanWrapper(TestCase):
             self.assertNotIsInstance(b.Binary, BaanWrapper)
 
     def test_setter(self):
-        with Baan('Baan.Application.erpln') as b:
+        with Baan('Baan.Application.erpln', dispatcher=Mock()) as b:
             b.Timeout = 3800
             b.Binary = True
 

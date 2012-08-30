@@ -1,7 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from baanlib import Baan, BaanWrapper, UnknownDllException
+from baanlib import (Baan,
+                     BaanWrapper,
+                     UnknownDllException,
+                     UnknownMethodException
+                     )
 from unittest import TestCase
 from mock import Mock
 
@@ -82,10 +86,16 @@ class TestBaanWrapper(TestCase):
             b.Timeout = 3800
             b.Binary = True
 
-    def test_error_unkown_dll(self):
+    def test_error_unknown_dll(self):
         mock = Mock()
         with Baan('Baan.Application.erpln', dispatcher=mock) as b:
             baanmock = mock.return_value
             baanmock.Error = -1
             self.assertRaises(UnknownDllException, b.unkowndll.foo)
-            print(mock.Error)
+
+    def test_error_unknown_method(self):
+        mock = Mock()
+        with Baan('Baan.Application.erpln', dispatcher=mock) as b:
+            baanmock = mock.return_value
+            baanmock.Error = -2
+            self.assertRaises(UnknownMethodException, b.dll.unknown_method)

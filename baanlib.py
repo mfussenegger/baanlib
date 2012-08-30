@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 __all__ = ['Baan']
-__version__ = '0.1.3'
+__version__ = '0.1.5'
 
 import sys
 import logging
@@ -25,6 +25,10 @@ else:
 # "public" properties like dll_name are prefixed with '_'
 
 class UnknownDllException(Exception):
+    pass
+
+
+class UnknownMethodException(Exception):
     pass
 
 
@@ -131,4 +135,6 @@ class BaanWrapper(object):
         self._baanobj.ParseExecFunction(self._dll_name, method)
         if self._baanobj.Error == -1:
             raise UnknownDllException
+        elif self._baanobj.Error == -2:
+            raise UnknownMethodException
         return self._baanobj.ReturnValue

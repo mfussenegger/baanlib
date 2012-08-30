@@ -23,6 +23,9 @@ else:
 # To avoid collision with baan dll function names, inside the classes even
 # "public" properties like dll_name are prefixed with '_'
 
+class UnknownDllException(Exception):
+    pass
+
 
 class Baan(object):
     """Wrapper class for win32com Dispatch
@@ -125,4 +128,6 @@ class BaanWrapper(object):
     def __call__(self, *args):
         method = self._get_calling_method(*args)
         self._baanobj.ParseExecFunction(self._dll_name, method)
+        if self._baanobj.Error == -1:
+            raise UnknownDllException
         return self._baanobj.ReturnValue

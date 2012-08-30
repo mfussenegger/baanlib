@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from baanlib import Baan, BaanWrapper
+from baanlib import Baan, BaanWrapper, UnknownDllException
 from unittest import TestCase
 from mock import Mock
 
@@ -71,9 +71,15 @@ class TestBaanWrapper(TestCase):
             self.assertNotIsInstance(b.ReturnCall, BaanWrapper)
             self.assertNotIsInstance(b.Binary, BaanWrapper)
 
-
     def test_setter(self):
         with Baan('Baan.Application.erpln') as b:
             b.Timeout = 3800
             b.Binary = True
 
+    def test_error_unkown_dll(self):
+        mock = Mock()
+        with Baan('Baan.Application.erpln', dispatcher=mock) as b:
+            baanmock = mock.return_value
+            baanmock.Error = -1
+            self.assertRaises(UnknownDllException, b.unkowndll.foo)
+            print(mock.Error)

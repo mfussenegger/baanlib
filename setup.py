@@ -16,6 +16,5 @@ setup(
     py_modules=['baanlib'],
     install_requires=[
         'mock',
-        'pywin32',
     ],
 )
